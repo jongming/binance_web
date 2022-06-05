@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <title>Stocks</title>
+        <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+        <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}"/>
+        <link rel="stylesheet" href="{{url_for('static', filename='industry.css')}}"/>
+        <script src="{{url_for('static', filename='nav.js')}}"></script>      
+        <link rel="stylesheet" href="{{url_for('static', filename='nav.css')}}"/>
+    </head>
+    <body>
+        <div id="page_heading"></div>
+        {% include 'nav.html' %}
+        
+        <div id="main">
+            <!-- <button id="btn_goback" onclick="history.back()" style="position:absolute;">Back</button> -->
+            <div id="layout_block"></div>
+            <div>{% block content %}{% endblock %}</div>
+
+        </div>
+        <script src="{{url_for('static', filename='chart2.js')}}"></script>
+        
+    </body>
+</html>

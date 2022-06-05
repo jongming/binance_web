@@ -1,0 +1,99 @@
+{%extends 'layout.html'%}
+
+
+{% block content %}
+<table class="table_records">
+    <tr>
+        <td>Stocks under consolication</td>
+        <td>
+            <form method="post"> 
+                <div>
+                    <span>
+                        <label for="scan_data">Composit:</label>
+                        <input class="reg" type="number" placeholder="80" value="80" id="cmp" name="cmp">
+                    </span>
+                    <span>
+                        <label>RS:</label>
+                        <input  class="reg"type="number" placeholder="80" value="80" id="rs" name="rs">
+                    </span>
+                    <span>
+                        <label>Look back period(days):</label>
+                        <input class="reg" type="number" placeholder="14" value="14" id="lookback" name="lookback">
+                    </span>
+                    <span>
+                        <label>Percent consolidation:</label>
+                        <input class="reg" type="number" placeholder="5" value="5" id="percent" name="percent">
+                    </span>
+                    <input type="submit" name="scan_data" value="consolidate">
+                </div>
+            </form>
+
+        </td>
+    </tr>
+    <tr>
+        <td>Volume Profile</td>
+        <td>
+            <form method="post"> 
+                <div>
+                    <label for="scan_data">Composit:</label>
+                    <input class="reg" type="number" placeholder="80" value="80" id="cmp" name="cmp">
+                    <label>RS:</label>
+                    <input class="reg" type="number" placeholder="80" value="80" id="rs" name="rs">
+                    <label>Price Change:</label>
+                    <input class="reg" type="number" placeholder="0" value="0" id="price_change" name="price_change">
+                    <label>Volume %:</label>
+                    <input class="reg" type="number" placeholder="50" value="50" id="vol_percent" name="vol_percent">
+                    <label>Volume:</label>
+                    <input class="long" type="number" placeholder="400000" value="400000" id="vol" name="vol">
+                    <input type="submit" name="scan_data" value="Get Volume Profile">
+                </div>
+            </form>
+
+        </td>
+    </tr>
+</table>
+<table id="display_table" class="table_records">
+    <tr>
+        <th></th>
+        <th>Info</th>
+        <th></th>
+    </tr>
+</table>
+{% block javascript %}
+<script src="{{url_for('static', filename='chartjs.js')}}"></script>
+<script src="{{url_for('static', filename='layout_charts_n_data.js')}}"></script>
+<script>
+    
+    document.getElementById("page_heading").innerHTML = "Scanner";
+    var action_data = JSON.parse({{jaction_data | tojson}});
+    var stocks_data = JSON.parse({{jstocks_data | tojson | safe}});
+    var rs_data = JSON.parse({{jrs_data | tojson | safe}});
+    var stock_list = JSON.parse({{jstock_list | tojson | safe}});
+
+    console.log(stocks_data)
+    // console.log(rs_data)
+    // console.log(stock_list)
+
+    if (action_data.getdata == "consolidate"){
+
+        var layout = new Layout_charts_n_data();
+        var _table = document.getElementById("display_table")
+        for (var i=0; i<Object.keys(rs_data).length; i++){
+            var _row = _table.insertRow(i+1)
+            var _cell0 = _row.insertCell(0)
+            var _cell1 = _row.insertCell(1)
+            var _cell2 = _row.insertCell(2)
+            _cell0.innerHTML = layout.lightweightchart(i)
+            _cell1.innerHTML = layout.stock_info(i, rs_data)
+            _cell2.innerHTML = layout.chartjs(i)
+        }
+
+        var rsChartjs_creator = new RSChartjs_creator(rs_data);
+        rsChartjs_creator.process_data();
+        rsChartjs_creator.apply_chart();
+    }
+
+</script>
+
+{% endblock%}
+{% endblock%}

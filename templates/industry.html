@@ -1,0 +1,86 @@
+{%extends 'layout.html'%}
+
+{% block content %}
+
+<table id="display_table" class="table_records">
+    <tr>
+        <th>
+            <span><a href="/industry?sortby=daily">Daily</a>&nbsp;&nbsp;&nbsp;</span>
+            <span><a href="/industry?sortby=weekly">Weekly</a>&nbsp;&nbsp;&nbsp;</span>
+            <span><a href="/industry?sortby=monthly">Monthly</a></span>
+        </th>
+        <th>Info</th>
+    </tr>
+</table>
+
+{% block javascript %}
+<script src="{{url_for('static', filename='chartjs.js')}}"></script>
+<script src="{{url_for('static', filename='layout_charts_n_data.js')}}"></script>
+<script>
+    var url_sorby = location.search.split('sortby=')[1];
+    if (url_sorby != null){
+        document.getElementById("page_heading").innerHTML = url_sorby[0].toUpperCase() + url_sorby.slice(1);
+    }
+    function new_chartjs(value){
+        if (value != null){
+            new Chart(document.getElementById(value[0]), { //match div id
+                type: "line",
+                data: {
+                    labels: value[2], //industry
+                    datasets:[{
+                        label: value[1],
+                        data: value[3],
+                        fill: false,
+                        borderColor: "rgb(255, 0, 0)",
+                        tension: 0.1,
+                        showLine: true
+                    },
+                ]
+                    
+                },
+                options:{
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+        });
+        }
+    }
+    
+    var jindustry_data = JSON.parse({{jindustry_data | tojson}});
+    console.log(jindustry_data)
+
+    var layout = new Layout_charts_n_data();
+    var _table = document.getElementById("display_table")
+
+    for (var i=0; i<Object.keys(jindustry_data).length; i++){
+        var _row = _table.insertRow(i+1)
+        var _cell0 = _row.insertCell(0)
+        var _cell1 = _row.insertCell(1)
+        _cell0.innerHTML = layout.chartjs(i)
+        _cell1.innerHTML = layout.industry_stock_info(i, jindustry_data)
+    }
+
+    var industryChartjs_creator = new IndustryChartjs_creator(jindustry_data);
+    industryChartjs_creator.process_data();
+    industryChartjs_creator.apply_chart();
+
+    //build array for chartjs 
+    const charts_structure = []
+    for (let i=1; i<Object.keys(jindustry_data).length+1; i++){
+        
+        // var _ind = eval('jindustry_data.ind'+i+'.industry')
+        // var _on_date = eval('jindustry_data.ind'+i+'.on_date')
+        // var _perfT = eval('jindustry_data.ind'+i+'.perfT')
+        // var _array = eval('["chjs_chart'+i+'", _ind, _on_date, _perfT]')
+
+        // //console.log(_array)
+        // charts_structure.push(_array)
+        //console.log(_array)
+    }
+    //console.log(charts_structure)
+
+    build_industry_dropdown()
+    
+</script>
+{% endblock%}
+{% endblock%}

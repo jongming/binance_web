@@ -1,0 +1,5 @@
+-Get previous close difference, high-low range, 50day volume, volume difference 
+SELECT on_date, ROUND(high,2) high, ROUND(low,2) low, ROUND(high-low,2) hl_range, ROUND(open,2) open, ROUND(adj_close,2) close, 
+ROUND(adj_close - LAG(adj_close, -1, 0) OVER (ORDER BY on_date DESC) ,2) closeDiff, volume, av50d_vol, vol_pct 
+FROM historical_data WHERE ticker = 'AAPL'  order by on_date DESC
+

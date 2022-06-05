@@ -1,0 +1,121 @@
+body {
+    background-color: rgb(194, 216, 218);
+  }
+  h1 {
+    color: blue;
+  }
+  p {
+    color: red;
+  }
+
+#main{
+    /* margin-top: 100px; */
+}
+
+#page_heading{
+  padding: 30px;
+  text-align: center;
+  background: #1abc9c;
+  color: white;
+  font-size: 30px;
+} 
+
+.box {
+  /* height: 300px; */
+  width: 90%;
+  border: 1px solid rgb(55, 0, 255);
+  /* margin: auto;
+  padding-bottom: 10px;
+  padding-left: 50px;
+  vertical-align: middle; */
+  /* overflow: hidden; */
+  /* display: flex;  */
+  /* justify-content: space-around; */
+}  
+
+.chart_title_class {
+  font-weight: bold;
+  font-size: 22px;
+  padding-bottom: 5px;
+}
+
+.sector {
+  font-size: 16px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.industry {
+  font-size: 16px;
+  /* text-align: justify; */
+}
+
+.td_info {
+  padding-left: 20px;
+  padding-right: 20px;
+  width: 200px;
+  height: 300px;
+  /* border: 2px solid green; */
+  float: left;
+  /* display: inline-block; */
+}
+
+.td_tradingview_chart{
+  width: 500px;
+  height: 300px;
+  /* border: 2px solid blue; */
+  float: left;
+  /* display: inline-block; */
+}
+
+.td_chartjs_chart{
+  width: 300px;
+  height: 300px;
+  margin-top:0em;
+  float: left;
+  /* display: inline-block; */
+}
+
+.table_records {
+  border: 1px solid crimson;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  vertical-align: top;
+}
+
+table.table_records th, td {
+    /* text-align: left; */
+    padding: 8px;
+    border: 1px solid greenyellow;
+  }
+
+table.table_records tr:nth-child(even) {
+    background-color: #D6EEEE;
+  }
+
+  table.table_records input.reg {
+    width: 50px;
+  }
+
+  table.table_records input.long {
+    width: 100px;
+  }
+
+.industry_stocks {
+  height: 300px;
+  overflow: auto;
+}
+
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

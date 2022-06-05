@@ -1,0 +1,8 @@
+.stock_rating {
+    display: inline-block;
+    width: 40px;
+    border: 2px crimson;
+    padding: 5px;
+    position: relative;
+
+}

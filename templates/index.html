@@ -1,0 +1,60 @@
+<html>
+    <head>
+        
+        <title>Coinview</title>
+        <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+        <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}"/>
+    </head>
+    <body>
+        <h1>{{title}}</h1>
+        <form action="/buy" method="post">
+       
+            <input type="submit" name="buy" value="buy" />
+        </form>
+        
+        <div class="box">
+            <div id="chart"></div>
+            <div id="chart_title"></div>
+        </div>
+        <div class="box">
+            <div id="chart1"></div>
+            <div id="chart1_title"></div>
+        </div>
+        <div class="box">
+            <div id="chart2"></div>
+            <div id="chart2_title"></div>
+        </div>
+        <div class="box">
+            <div id="chart3"></div>
+            <div id="chart3_title"></div>
+        </div>
+
+        <div id="trades"></div>
+        <h3>Settings</h3>
+        <div id="settings">
+            <input type="checkbox"/> RSI
+            <input type="text" id="rsi_length" name="rsi_length" placeholder="14"/>
+            Overbought
+            <input type="text" id="rsi_overbought" name="rsi_overbought" placeholder="70"/>
+            Oversold
+            <input type="text" id="rsi_oversold" name="rsi_oversold" placeholder="30"/>
+            
+        </div>
+
+        <script>
+            // var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@trade");
+            // console.log(binanceSocket)
+
+            var tradeDiv = document.getElementById("trades")
+            // binanceSocket.onmessage = function (event){
+            //     console.log(event.data);
+
+                // var messageObject = JSON.parse(event.data)
+                // trade_div.append(messageObject.p)
+            // }
+
+        </script>
+        <script src="{{url_for('static', filename='chart.js')}}"></script>
+    </body>
+
+</html>

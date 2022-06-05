@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <title>Stocks</title>
+        <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}"/>
+        <script src="{{url_for('static', filename='nav.js')}}"></script>      
+        <link rel="stylesheet" href="{{url_for('static', filename='nav.css')}}"/>
+    </head>
+    <body>
+        <div id="page_heading"></div>
+        {% include 'nav.html' %}
+        
+        <div id="main">
+            <!-- <button id="btn_goback" onclick="history.back()" style="position:absolute;">Back</button> -->
+            <div id="layout_block"></div>
+            <div>{% block content %}{% endblock %}</div>
+
+        </div>
+
+        
+    </body>
+</html>

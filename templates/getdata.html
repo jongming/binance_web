@@ -1,0 +1,126 @@
+{%extends 'template.html'%}
+
+{% block content %}
+Get DAta!
+<table class="table_records">
+    <tr>
+        <th>
+            Pull Data
+        </th>
+        <th></th>
+    </tr>
+    <tr>
+        <td>
+            <form method="post"> 
+                <div>
+                    <label for="yahoo_daily">Save tickers to CSV</label>
+                    <input type="submit" name="get_external_data" value="Save Tickers to CSV" onclick="setMotion()">
+                </div>
+                <br/>
+                <div>
+                    <label for="save_yahoo_daily">Save CSV to DB</label>
+                    <input type="submit" name="get_external_data" value="Save Yahoo daily" onclick="setMotion()">
+            </div>
+            </form>
+        </td>
+        <td rowspan="3">
+            <div id="loader" class="loader"></div>
+            <span id="response_text"></span>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <form method="post"> 
+                <label for="ibd_date">Select Date:</label>
+                <input type="date" id="ibd_date" name="ibd_date">
+                <input type="submit" name="get_external_data" value="ibd_daily" onclick="setMotion()">
+            </form>
+            
+        </td>
+        
+    </tr>
+    <tr>
+        <td>
+            <form method="post"> 
+                <label for="finviz_daily">Get Finviz Industry Daily Performance:</label>
+                <input type="submit" name="get_external_data" value="finviz_daily"  onclick="setMotion()">
+            </form>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <form method="post"> 
+                <label for="Not in Finviz">Tickers in IBD, but not in Finviz:</label>
+                <input type="submit" name="get_external_data" value="Get Finviz ticker info"  onclick="setMotion()">
+            </form>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <form method="post"> 
+                <label for="moving_average">Moving Average:</label>
+                <input type="submit" name="get_external_data" value="Moving Average"  onclick="setMotion()">
+            </form>
+        </td>
+    </tr>
+</table>
+<table id="display_table" class="table_records">
+    
+
+</table>
+
+<!-- <div id="show_data"></div> -->
+
+{% block javascript %}
+<script>
+    var master_data = ""
+    var finviz_data = ""
+    document.getElementById("loader").style.display = "block";
+    master_data = JSON.parse({{jmaster_data | tojson | safe}});
+    tableData = JSON.parse({{jdata | tojson | safe}});
+
+    // console.log("mastr_data: " + master_data.getdata.action)
+    // console.log("tableData: " + tableData)
+
+    function buildTable(data){
+        let table = document.getElementById("display_table")
+        var tableBody = document.createElement("tbody")
+
+        var tr = table.insertRow(0);
+        
+        data.forEach(function(rowData){
+            
+            var row = document.createElement("tr");
+            rowData.forEach(function(cellData){
+                var cell = document.createElement("td")
+                cell.appendChild(document.createTextNode(cellData));
+                row.appendChild(cell);
+
+            });
+            tableBody.appendChild(row)
+
+        });
+        table.appendChild(tableBody)
+    }
+
+    function setMotion(){
+        console.log("Set Motion")
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("response_text").display = "none";
+        document.getElementById("response_text").innerHTML = "";
+    }
+
+    if(master_data.getdata.action == 'wait'){
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("response_text").display = "none";
+    }else if (master_data.getdata.action == true) {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("response_text").innerHTML = "Done!";
+        buildTable(tableData)
+    } else {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("response_text").display = "none";
+    }
+</script>
+{% endblock%}
+{% endblock%}

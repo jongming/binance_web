@@ -1,0 +1,5 @@
+flask
+TA-Lib
+numpy
+alpha_vantage.timeseries
+pandas-datareader

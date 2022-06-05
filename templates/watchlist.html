@@ -1,0 +1,70 @@
+{%extends 'layout.html'%}
+
+
+{% block content %}
+
+<form method="post">
+    <label for="ticker">Ticker</label>
+    <input type="text" name="ticker" >
+    <label for="price">Price</label>
+    <input type="text" name="price" >
+    <input type="submit" value="Submit" >
+</form>
+
+<table id="alert_table" class="table_records">
+    <tr>
+        <th></th>
+        <th>Ticker</th>
+        <th>Price</th>
+        <th>breaking out!</th>
+    </tr>
+</table>
+
+
+
+{% block javascript %}
+<script>
+    document.getElementById("page_heading").innerHTML = "Watchlist";
+    // build_industry_dropdown() 
+    var jalerts_data = JSON.parse({{jalerts_data | tojson}});
+    var stocks_data = JSON.parse({{jstocks_data | tojson}});
+    // console.log(jalerts_data)  
+    // console.log(stocks_data)
+
+    //layout_block
+    var table = document.getElementById("alert_table");
+    for (i = 1; i < Object.keys(jalerts_data).length+1; i++){
+        var _record = eval('jalerts_data.ticker'+i);
+        console.log(_record)
+        for (j=0; j < _record.ticker.length; j++){
+            var _row = table.insertRow(i);
+            draw_row(_row, _record, i, j)
+        }
+    }
+
+    function draw_row(row, data, i, j){
+        var _row = row;
+        var _cell1 = _row.insertCell(0);
+        var _cell2 = _row.insertCell(1);
+        var _cell3 = _row.insertCell(2);
+        var _cell4 = _row.insertCell(3);
+        var _cell5 = _row.insertCell(4);
+        var _cell6 = _row.insertCell(5);
+        _cell1.innerHTML =
+                '<div class="tradingview_chart">'+
+                    '<div id="chart'+i+'"></div>'+
+                '</div>';
+        _cell2.innerHTML = data.ticker[j];
+        _cell3.innerHTML = data.price[j];
+        _cell4.innerHTML = data.open_date[j];
+        _cell5.innerHTML = data.triggered_date[j];
+        _cell6.innerHTML = data.close[j];
+        return _row
+    }
+
+        
+        
+</script>
+{% endblock%}
+{% endblock%}
+

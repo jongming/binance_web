@@ -1,0 +1,24 @@
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="#">About</a>
+    <a href="/scanner">Scanner</a>
+    <a href="/watchlist">Watch List</a>
+    <a href="/industry">Industry Rank</a>
+    <a href="/stocks">Stocks</a>
+    <a href="/getdata">Get Data</a>
+    <!-- <form action="{{ url_for('stocks') }}" method="post"> -->
+    <form method="post"> 
+        <div class="sidenav_form_item">                 
+            <input type="text" name="stocklist">
+        </div>
+        <div class="sidenav_form_item">
+            <select name="industry_dropdown" id="industry_dropdown">
+                <option value="">Select Industry</option>
+            </select>
+        </div>  
+        <div class="sidenav_form_item">
+            <input type="submit">
+        </div>
+    </form>
+</div>
+<div id="open_sideNav" onclick="openNav()">Nav</div>
