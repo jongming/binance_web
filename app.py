@@ -142,7 +142,7 @@ def getdata():
     if get_external_data == "Moving Average":
         print("Moving Average")
         moving_average = ma.Moving_Averages()
-        moving_average.get_tickers("M")
+        moving_average.get_tickers()
         moving_average.process_data()
 
     master_data = {"getdata": {"action": result}}
@@ -179,6 +179,7 @@ def scanner():
         form_vol_percent = request.form['vol_percent']
         form_vol = request.form['vol']
         _gcharts = gcharts.GlobalCharts()
+        print(form_cmp, form_rs, form_price_change, form_vol_percent, form_vol)
         lst_tickers = _gcharts.getVolumeChange(form_cmp, form_rs, form_price_change, form_vol_percent, form_vol)
         # print(list(lst_tickers))
         _df = _gcharts.getHistoricalData(list(lst_tickers))

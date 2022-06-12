@@ -236,8 +236,8 @@ class GlobalCharts:
         self.df_historicalData = _df
         return _df
 
-    def getVolumeChange(self, cmp=80, rs=80, price_change=0, volume_change=50, volume=400000):
-        df = db_calls.select_IBD_tickers_byVariables(cmp=80, rs=80, price_change=0, vol_percent=50, volume=400000)
+    def getVolumeChange(self, cmp, rs, price_change, volume_percent, volume):
+        df = db_calls.select_IBD_tickers_byVariables(cmp, rs, price_change, volume_percent, volume)
         return df
 
     def get_isConsolidate_isBreak(self, cmp=80, rs=80, lookback=10, pcent=3):

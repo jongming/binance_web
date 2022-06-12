@@ -7,8 +7,8 @@ class Moving_Averages():
     def __init__(self) -> None:
         self.df_tickers = pd.DataFrame()
 
-    def get_tickers(self, letter='A'):
-        self.df_tickers = db_calls.select_historical_data_tickers(letter)
+    def get_tickers(self):
+        self.df_tickers = db_calls.select_historical_data_tickers()
 
     def process_data(self):
         tickers = self.df_tickers
