@@ -247,19 +247,26 @@ def select_IBD_tickers_by_rs(cmp=80, rs=80):
         if (sqliteConnection):
             sqliteConnection.close()
 
-def select_IBD_tickers_byVariables(cmp=80, rs=80, price_change=0, vol_percent=50, volume=400000):
+def select_IBD_tickers_byVariables(cmp, rs, price_change, vol_percent, volume):
+    print(cmp, rs, price_change, vol_percent, volume)
     try:
         sqliteConnection = sqlite3.connect(database, timeout=10)
         cursor = sqliteConnection.cursor()
         #cursor.execute("select ticker, cmp, eps, rs, smr, accdis, fiftytwowk, price, price_change, vol_percent, volume, pe " + 
-        cursor.execute("select ticker from IBD_Data where cmp > ? AND rs > ? AND price_change > ? AND vol_percent > ? AND volume > ? AND " +
-            "on_date = (SELECT MAX(on_date) FROM IBD_Data) ORDER by cmp DESC limit 10;", (cmp, rs, price_change, vol_percent, volume))
+        # sql = ("select ticker from IBD_Data where cmp > ? AND rs > ? AND price_change > ? AND vol_percent > ? AND volume > ? AND " +
+        #     "on_date = (SELECT MAX(on_date) FROM IBD_Data) ORDER by cmp DESC;", (cmp, rs, price_change, vol_percent, volume))
+        if int(vol_percent) < 0:
+            sql = (f"select ticker from IBD_Data where cmp > ? AND rs > ? AND price_change > ? AND vol_percent < ? AND volume > ? AND on_date = (SELECT MAX(on_date) FROM IBD_Data) ORDER by cmp DESC")
+        else:
+            sql = (f"select ticker from IBD_Data where cmp > ? AND rs > ? AND price_change > ? AND vol_percent > ? AND volume > ? AND on_date = (SELECT MAX(on_date) FROM IBD_Data) ORDER by cmp DESC")
+
+        cursor.execute(sql, (cmp, rs, price_change, vol_percent, volume))
         records = cursor.fetchall()
         cursor.close()
         return records
     except sqlite3.Error as error:
         _error = error_handler.Error_Handler(error, sys.exc_info())
-        _error.save_to_errorlog(f">>> Failed to select_IBD_tickers_by_rs")
+        _error.save_to_errorlog(f">>> Failed to select_IBD_tickers_byVariables")
     finally:
         if (sqliteConnection):
             sqliteConnection.close()
@@ -402,17 +409,21 @@ def select_historical_industry_performance(industry):
         if sqliteConnection:
             sqliteConnection.close()
 
-def select_historical_data_tickers(letter):
+def select_historical_data_tickers():
     try:
         sqliteConnection = sqlite3.connect(database, timeout=10)
-        query = sqliteConnection.execute("SELECT ticker FROM historical_data WHERE ticker like ? AND " +
-            "on_date = (SELECT max(on_date) from historical_data)GROUP BY ticker;", (letter+'%',))
+        # if not letter:
+        query = sqliteConnection.execute("SELECT ticker FROM historical_data WHERE " +
+            "on_date = (SELECT max(on_date) from historical_data)GROUP BY ticker;" )
+        # else:
+        #     query = sqliteConnection.execute("SELECT ticker FROM historical_data WHERE ticker like ? AND " +
+        #         "on_date = (SELECT max(on_date) from historical_data)GROUP BY ticker;", (letter+'%',))
         cols = [column[0] for column in query.description]
         results= pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
         return results
     except sqlite3.Error as error:
         _error = error_handler.Error_Handler(error, sys.exc_info())
-        _error.save_to_errorlog(f">>> Failed to select_historical_data_tickers: " + letter)
+        _error.save_to_errorlog(f">>> Failed to select_historical_data_tickers")
     finally:
         if (sqliteConnection):
             sqliteConnection.close()
