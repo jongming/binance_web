@@ -24,9 +24,6 @@ class GetYahoo:
 
     def get_tickers_info(self, letter):
         _df = db_calls.select_tickers_last_date(letter)
-        print("+++++++++++++++++")
-        print(_df)
-        print("+++++++++++++++++")
         self.df_tickers = _df
 
     def run_singles_gets(self, date_format): #loop through yahoo api one ticker
@@ -42,8 +39,8 @@ class GetYahoo:
                 if len(_y_list) > 0:
                     _df_yahoo = pd.DataFrame(_y_list)
                     _df_yahoo.insert(0, "ticker", _ticker)
-                    print(_df_yahoo)
-                    print('>>>')
+                    # print(_df_yahoo)
+                    # print('>>>')
                     frames = [_df_holder, _df_yahoo]
                     _df_holder = pd.concat(frames, axis=0)
                     self.df_yahoo_data = _df_holder
@@ -95,15 +92,20 @@ class GetYahoo:
     def save_data(self, df):
         # _df = self.df_yahoo_data.stack().reset_index().rename(index=str, columns={"level_1": "Symbols"}).sort_values(['Symbols','Date'])
         _df_data = pd.DataFrame(df.values.tolist(), columns = ["ticker", "date", "high", "low", "open", "close", "volume", "adj_close"])
-        # _df_data = pd.DataFrame(_df.values.tolist(), columns = ["date", "ticker", "adj_close", "close", "high", "low", "open", "volume"])
+        _df_data['high'] = round(_df_data['high'],2)
+        _df_data['low'] = round(_df_data['low'],2)
+        _df_data['open'] = round(_df_data['open'],2)
+        _df_data['close'] = round(_df_data['close'],2)
+        _df_data['volume'] = round(_df_data['volume'],2)
+        _df_data['adj_close'] = round(_df_data['adj_close'],2)
         #Add 2 columns (ticker, date) to the end of df
         _df_data['ticker2'] = _df_data.loc[:, 'ticker']
         _df_data['date2'] = _df_data.loc[:, 'date']
         _df_data['date']= _df_data['date'].astype(str) #convert timestamp to string in dataframe
         _df_data['date2']= _df_data['date2'].astype(str) #convert timestamp to string in dataframe
-        print(">"*20)
-        print(_df_data)
-        print(">"*20)
+        # print(">"*20)
+        # print(_df_data)
+        # print(">"*20)
         db_calls.batch_insert_historical_data(_df_data)
         
     def get_last_saved_data(self):

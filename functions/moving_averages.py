@@ -10,11 +10,14 @@ class Moving_Averages():
     def get_tickers(self):
         self.df_tickers = db_calls.select_historical_data_tickers()
 
+    def set_ticker(self, ticker):
+        self.df_tickers = pd.DataFrame([[ticker]], columns=['ticker'])
+
     def process_data(self):
         tickers = self.df_tickers
         for ticker in tickers['ticker'].values.tolist():
             df = db_calls.select_historical_data_all(ticker)
-            print(ticker)
+            # print(ticker)
             _his = pd.DataFrame()
             _his = self._builddata(df)
             _hisBox = _his[_his['sma200'].notna()] #remove any rows where sma200 is a null
@@ -23,9 +26,9 @@ class Moving_Averages():
             if len(_hisBox) == 0:
                 _hisBox = _his[_his['ema21'].notna()]
             
-            print(_hisBox[['vol50', 'vol_pct', 'ema8', 'ema21', 'sma50', 'sma200', 'id']])   
+            # print(_hisBox[['vol50', 'vol_pct', 'ema8', 'ema21', 'sma50', 'sma200', 'id']])   
             self._update_historical_data_moving_avg(_hisBox[['vol50', 'vol_pct', 'ema8', 'ema21', 'sma50', 'sma200', 'id']])
-            print("------------------")
+            # print("------------------")
 
     def _update_historical_data_moving_avg(self, df):
         db_calls.update_historical_data_moving_avg(df)

@@ -108,6 +108,28 @@ def getdata():
         print(getYahooData.df_tickers)
         getYahooData.save_to_file()
         
+    if get_external_data == "Save Yahoo single":
+        _tickers = request.form['ticker'].upper()
+        getYahooData = gyahoo.GetYahoo()
+        _tickers = _tickers.replace(" ","").split(",")
+        for _ticker in _tickers:
+            getYahooData.get_tickers_info(_ticker)
+            getYahooData.run_singles_gets(date_format)
+            print(getYahooData.df_yahoo_data)
+            getYahooData.save_yahoo_data()
+            # _df = getYahooData.get_last_saved_data() #for displaying last saved data
+            df = getYahooData.df_yahoo_data
+            if not df.empty:
+                df.columns = ["ticker", "date", "high", "low", "open", "close", "volume", "adj_close"]
+                df['date'] = df['date'].astype(str)
+                df_data = df.values.tolist()
+                print(df_data)
+                result = True
+                print("Moving Average")
+                moving_average = ma.Moving_Averages()
+                moving_average.set_ticker(_ticker)
+                moving_average.process_data()
+
     if get_external_data == "Save Yahoo daily":
         getYahooData = gyahoo.GetYahoo()
 
@@ -117,12 +139,8 @@ def getdata():
             getYahooData.run_singles_gets(date_format)
             print(getYahooData.df_yahoo_data)
             getYahooData.save_yahoo_data()
-
-
         #get data from csv and save to db
         # getYahooData.save_data_from_csv() 
-
-
         _df = getYahooData.get_last_saved_data() #for displaying last saved data
         df_data = _df.values.tolist()
         result = True

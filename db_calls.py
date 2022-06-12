@@ -214,10 +214,14 @@ def select_Finviz_Performance_data():
 def select_tickers_last_date(letter):
     try:
         sqliteConnection = sqlite3.connect(database, timeout=10)
+        # query = sqliteConnection.execute("SELECT t.ticker_IBD, t.ticker_yahoo, max(on_date) as date FROM historical_data h " +
+        #                     "INNER JOIN ticker_lookup t ON t.ticker_IBD=h.ticker " +
+        #                     "WHERE ticker like ? " +
+        #                     "group by ticker ORDER BY ticker;", (letter+'%',))
         query = sqliteConnection.execute("SELECT t.ticker_IBD, t.ticker_yahoo, max(on_date) as date FROM historical_data h " +
                             "INNER JOIN ticker_lookup t ON t.ticker_IBD=h.ticker " +
-                            "WHERE ticker like ? " +
-                            "group by ticker ORDER BY ticker;", (letter+'%',))
+                            "WHERE ticker = ? " +
+                            "group by ticker ORDER BY ticker;", (letter,))
         cols = [column[0] for column in query.description]
         results= pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
         return results
