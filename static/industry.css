@@ -4,5 +4,40 @@
     border: 2px crimson;
     padding: 5px;
     position: relative;
+    font-size:medium;
 
+}
+
+.stock_rating.link {
+    padding: 10px 20px 10px 0px;
+    border: 1px;
+    /* background-color: antiquewhite; */
+    width:fit-content;
+    font-weight: bolder;
+}
+
+.stock_rating.ticker {
+    font-weight: bold;
+    padding-right: 25px;
+}
+
+.stock_rating.cmp {
+    background-color: lightcyan;
+}
+
+.stock_rating.rs {
+    background-color: lightcyan;
+}
+
+.stock_rating.ad {
+    background-color: lightcyan;
+}
+
+.stock_rating.head {
+    font-weight: bolder;
+    text-align: center;
+}
+
+.stock_rating.data {
+    text-align: center;
 }

@@ -79,16 +79,26 @@ class Layout_charts_n_data{
         var _ind = eval('data.ind'+i+'.industry')
         console.log("_________________")
         var _stock_data = eval('data.ind'+i+'.stocks')
-        var _block = '<div>'+
-            '<a href="/stocks?industry='+encodeURIComponent(_ind)+'">' + _ind +
-            '</a></div><div class="industry_stocks">'
+        var _block = '<div class="stock_rating link">'+
+                '<a href="/stocks?industry='+encodeURIComponent(_ind)+'">' + _ind +'</a></div>'+
+            '<div>'+
+                '<span class="stock_rating ticker head"></span>'+
+                '<span class="stock_rating cmp head">CMP</span>'+
+                '<span class="stock_rating eps head">EPS</span>'+
+                '<span class="stock_rating rs head">RS</span>'+
+                '<span class="stock_rating smr head">SMR</span>'+
+                '<span class="stock_rating ad head">AD</span>'+
+            '</div>' +
+            '<div class="industry_stocks">'
         for (let j=0; j<Object.keys(_stock_data).length; j++){
-            _block += '<div><span class="stock_rating">'+_stock_data[j].ticker+'</span>'+
-            '<span class="stock_rating">'+_stock_data[j].CMP+'</span>'+
-            '<span class="stock_rating">'+_stock_data[j].EPS+'</span>'+
-            '<span class="stock_rating">'+_stock_data[j].RS+'</span>'+
-            '<span class="stock_rating">'+_stock_data[j].SMR+'</span>'+
-            '<span class="stock_rating">'+_stock_data[j].AD+'</span></div>'
+            _block += '<div>'+
+                '<span class="stock_rating ticker">'+_stock_data[j].ticker+'</span>'+
+                '<span class="stock_rating cmp data">'+_stock_data[j].CMP+'</span>'+
+                '<span class="stock_rating eps data">'+_stock_data[j].EPS+'</span>'+
+                '<span class="stock_rating rs data">'+_stock_data[j].RS+'</span>'+
+                '<span class="stock_rating smr data">'+_stock_data[j].SMR+'</span>'+
+                '<span class="stock_rating ad data">'+_stock_data[j].AD+'</span>'+
+            '</div>'
         }
         _block += "</div>"
         return _block

@@ -101,6 +101,7 @@ def getdata():
         result = True
 
     if get_external_data == "Save Tickers to CSV":
+        print("Save Tickers to CSV")
         getYahooData = gyahoo.GetYahoo()
         getYahooData.get_tickers_info()
         # getYahooData.run_singles_gets(date_format)
@@ -109,12 +110,13 @@ def getdata():
         getYahooData.save_to_file()
         
     if get_external_data == "Save Yahoo single":
+        print("Save yahoo single")
         _tickers = request.form['ticker'].upper()
         getYahooData = gyahoo.GetYahoo()
         _tickers = _tickers.replace(" ","").split(",")
         for _ticker in _tickers:
-            getYahooData.get_tickers_info(_ticker)
-            getYahooData.run_singles_gets(date_format)
+            getYahooData.get_tickers_info(False, _ticker)
+            getYahooData.run_singles_gets(date_format, _ticker)
             print(getYahooData.df_yahoo_data)
             getYahooData.save_yahoo_data()
             # _df = getYahooData.get_last_saved_data() #for displaying last saved data
@@ -131,12 +133,13 @@ def getdata():
                 moving_average.process_data()
 
     if get_external_data == "Save Yahoo daily":
+        print("Save yahoo daily")
         getYahooData = gyahoo.GetYahoo()
 
         #save data from running yahoo get
         for letter in list(map(chr,range(ord('a'),ord('z')+1))):
-            getYahooData.get_tickers_info(letter)
-            getYahooData.run_singles_gets(date_format)
+            getYahooData.get_tickers_info(True, letter)
+            getYahooData.run_singles_gets(date_format, 0)
             print(getYahooData.df_yahoo_data)
             getYahooData.save_yahoo_data()
         #get data from csv and save to db

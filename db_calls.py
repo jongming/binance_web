@@ -211,17 +211,19 @@ def select_Finviz_Performance_data():
         if sqliteConnection:
             sqliteConnection.close()
 
-def select_tickers_last_date(letter):
+def select_tickers_last_date(isLetter, letter):
     try:
         sqliteConnection = sqlite3.connect(database, timeout=10)
-        # query = sqliteConnection.execute("SELECT t.ticker_IBD, t.ticker_yahoo, max(on_date) as date FROM historical_data h " +
-        #                     "INNER JOIN ticker_lookup t ON t.ticker_IBD=h.ticker " +
-        #                     "WHERE ticker like ? " +
-        #                     "group by ticker ORDER BY ticker;", (letter+'%',))
-        query = sqliteConnection.execute("SELECT t.ticker_IBD, t.ticker_yahoo, max(on_date) as date FROM historical_data h " +
-                            "INNER JOIN ticker_lookup t ON t.ticker_IBD=h.ticker " +
-                            "WHERE ticker = ? " +
-                            "group by ticker ORDER BY ticker;", (letter,))
+        if isLetter:
+            query = sqliteConnection.execute("SELECT t.ticker_IBD, t.ticker_yahoo, max(on_date) as date FROM historical_data h " +
+                                "INNER JOIN ticker_lookup t ON t.ticker_IBD=h.ticker " +
+                                "WHERE ticker like ? " +
+                                "group by ticker ORDER BY ticker;", (letter+'%',))
+        else:
+            query = sqliteConnection.execute("SELECT t.ticker_IBD, t.ticker_yahoo, max(on_date) as date FROM historical_data h " +
+                                "INNER JOIN ticker_lookup t ON t.ticker_IBD=h.ticker " +
+                                "WHERE ticker = ? " +
+                                "group by ticker ORDER BY ticker;", (letter,))
         cols = [column[0] for column in query.description]
         results= pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
         return results
@@ -416,9 +418,13 @@ def select_historical_industry_performance(industry):
 def select_historical_data_tickers():
     try:
         sqliteConnection = sqlite3.connect(database, timeout=10)
+
+        query = sqliteConnection.execute("SELECT ticker FROM historical_data GROUP BY ticker ORDER BY ticker;" )
+
         # if not letter:
-        query = sqliteConnection.execute("SELECT ticker FROM historical_data WHERE " +
-            "on_date = (SELECT max(on_date) from historical_data)GROUP BY ticker;" )
+        # query = sqliteConnection.execute("SELECT ticker FROM historical_data WHERE " +
+        #     "on_date = (SELECT max(on_date) from historical_data)GROUP BY ticker;" )
+
         # else:
         #     query = sqliteConnection.execute("SELECT ticker FROM historical_data WHERE ticker like ? AND " +
         #         "on_date = (SELECT max(on_date) from historical_data)GROUP BY ticker;", (letter+'%',))

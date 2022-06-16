@@ -27,10 +27,12 @@ class Moving_Averages():
                 _hisBox = _his[_his['ema21'].notna()]
             
             # print(_hisBox[['vol50', 'vol_pct', 'ema8', 'ema21', 'sma50', 'sma200', 'id']])   
-            self._update_historical_data_moving_avg(_hisBox[['vol50', 'vol_pct', 'ema8', 'ema21', 'sma50', 'sma200', 'id']])
+            self._update_historical_data_moving_avg(_hisBox[['vol50', 'vol_pct', 'ema8', 'ema21', 'sma50', 'sma200', 'id']],ticker)
             # print("------------------")
 
-    def _update_historical_data_moving_avg(self, df):
+    def _update_historical_data_moving_avg(self, df, ticker):
+        print(f"-----------------_update_historical_data_moving_avg: {ticker }---------------------")
+        print(df)
         db_calls.update_historical_data_moving_avg(df)
 
     def _builddata(self, his):

@@ -22,12 +22,15 @@ class GetYahoo:
         # self.error_handler = er.Error_Handler()
         # self.get_IBD_tickers()
 
-    def get_tickers_info(self, letter):
-        _df = db_calls.select_tickers_last_date(letter)
+    def get_tickers_info(self, isLetter, letter):
+        _df = db_calls.select_tickers_last_date(isLetter, letter)
+        print("get_tickers_info")
+        print(_df)
         self.df_tickers = _df
 
-    def run_singles_gets(self, date_format): #loop through yahoo api one ticker
-        last_trading_date = last_tradingday().strftime(date_format)
+    def run_singles_gets(self, date_format, ticker): #loop through yahoo api one ticker
+        _lDate = last_tradingday()
+        last_trading_date = _lDate.strftime(date_format)
         _df_holder = pd.DataFrame()
         _df_yahoo = pd.DataFrame()
         _y_list = []
@@ -44,6 +47,19 @@ class GetYahoo:
                     frames = [_df_holder, _df_yahoo]
                     _df_holder = pd.concat(frames, axis=0)
                     self.df_yahoo_data = _df_holder
+        else:
+            _fromDate = _lDate - dt.timedelta(days=200)
+            print(f"_fromDate:{_fromDate}   last_trading_date:{last_trading_date}")
+            _y_list = api_calls.get_yahoo_data(ticker, _fromDate, last_trading_date)
+            if len(_y_list) > 0:
+                _df_yahoo = pd.DataFrame(_y_list)
+                _df_yahoo.insert(0, "ticker", ticker)
+                # print(_df_yahoo)
+                # print('>>>')
+                frames = [_df_holder, _df_yahoo]
+                _df_holder = pd.concat(frames, axis=0)
+                self.df_yahoo_data = _df_holder
+            
 
     def run_batch_gets(self, df_data):
         pass
