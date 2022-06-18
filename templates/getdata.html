@@ -25,6 +25,8 @@ Get DAta!
                 <div>
                     <label for="save_yahoo_daily">Save single to DB</label>
                     <input type="text" name="ticker">
+                    <label for="from_date">From Date:</label>
+                    <input type="date" id="from_date" name="from_date">
                     <input type="submit" name="get_external_data" value="Save Yahoo single" onclick="setMotion()">
                 </div>
             </form>
@@ -65,6 +67,7 @@ Get DAta!
         <td>
             <form method="post"> 
                 <label for="moving_average">Moving Average:</label>
+                <input type="text" name="ticker">
                 <input type="submit" name="get_external_data" value="Moving Average"  onclick="setMotion()">
             </form>
         </td>

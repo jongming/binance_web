@@ -28,8 +28,9 @@ class GetYahoo:
         print(_df)
         self.df_tickers = _df
 
-    def run_singles_gets(self, date_format, ticker): #loop through yahoo api one ticker
+    def run_singles_gets(self, date_format, ticker, fromDate): #loop through yahoo api one ticker
         _lDate = last_tradingday()
+        _fromDate = fromDate
         last_trading_date = _lDate.strftime(date_format)
         _df_holder = pd.DataFrame()
         _df_yahoo = pd.DataFrame()
@@ -38,7 +39,8 @@ class GetYahoo:
             for data in self.df_tickers.values:
                 # print(data[1], data[2])
                 _ticker = data[0]
-                _y_list = api_calls.get_yahoo_data(_ticker, data[2], last_trading_date)
+                # _y_list = api_calls.get_yahoo_data(_ticker, data[2], last_trading_date)
+                _y_list = api_calls.get_yahoo_data(_ticker, _fromDate, last_trading_date)
                 if len(_y_list) > 0:
                     _df_yahoo = pd.DataFrame(_y_list)
                     _df_yahoo.insert(0, "ticker", _ticker)
@@ -48,7 +50,7 @@ class GetYahoo:
                     _df_holder = pd.concat(frames, axis=0)
                     self.df_yahoo_data = _df_holder
         else:
-            _fromDate = _lDate - dt.timedelta(days=200)
+            _fromDate = _lDate - dt.timedelta(days=210)
             print(f"_fromDate:{_fromDate}   last_trading_date:{last_trading_date}")
             _y_list = api_calls.get_yahoo_data(ticker, _fromDate, last_trading_date)
             if len(_y_list) > 0:

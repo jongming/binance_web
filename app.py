@@ -112,11 +112,12 @@ def getdata():
     if get_external_data == "Save Yahoo single":
         print("Save yahoo single")
         _tickers = request.form['ticker'].upper()
+        _from_date = request.form['from_date']
         getYahooData = gyahoo.GetYahoo()
         _tickers = _tickers.replace(" ","").split(",")
         for _ticker in _tickers:
             getYahooData.get_tickers_info(False, _ticker)
-            getYahooData.run_singles_gets(date_format, _ticker)
+            getYahooData.run_singles_gets(date_format, _ticker, _from_date)
             print(getYahooData.df_yahoo_data)
             getYahooData.save_yahoo_data()
             # _df = getYahooData.get_last_saved_data() #for displaying last saved data
@@ -162,8 +163,9 @@ def getdata():
 
     if get_external_data == "Moving Average":
         print("Moving Average")
+        _tickers = request.form['ticker'].upper()
         moving_average = ma.Moving_Averages()
-        moving_average.get_tickers()
+        moving_average.get_tickers(_tickers)
         moving_average.process_data()
 
     master_data = {"getdata": {"action": result}}

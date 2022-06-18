@@ -7,14 +7,21 @@ class Moving_Averages():
     def __init__(self) -> None:
         self.df_tickers = pd.DataFrame()
 
-    def get_tickers(self):
-        self.df_tickers = db_calls.select_historical_data_tickers()
+    def get_tickers(self, tickers):
+        if not tickers:
+            self.df_tickers = db_calls.select_historical_data_tickers()
+        else:
+            lst = [tickers]
+            self.df_tickers = pd.DataFrame(lst, columns=["ticker"])
+
+        
 
     def set_ticker(self, ticker):
         self.df_tickers = pd.DataFrame([[ticker]], columns=['ticker'])
 
     def process_data(self):
         tickers = self.df_tickers
+        print(tickers['ticker'])
         for ticker in tickers['ticker'].values.tolist():
             df = db_calls.select_historical_data_all(ticker)
             # print(ticker)
