@@ -1,10 +1,10 @@
 import pandas as pd
 from pandas_datareader import data as pdr
-import sqlite3
-import time
+# import sqlite3
+# import time
 import datetime as dt
-import sys
-import traceback
+# import sys
+# import traceback
 import pytz 
 import datetime
 
@@ -39,6 +39,8 @@ class GetYahoo:
             for data in self.df_tickers.values:
                 # print(data[1], data[2])
                 _ticker = data[0]
+                if not _fromDate: #if no value for _fromDate
+                    _fromDate = data[2]
                 # _y_list = api_calls.get_yahoo_data(_ticker, data[2], last_trading_date)
                 _y_list = api_calls.get_yahoo_data(_ticker, _fromDate, last_trading_date)
                 if len(_y_list) > 0:

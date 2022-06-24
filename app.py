@@ -140,7 +140,7 @@ def getdata():
         #save data from running yahoo get
         for letter in list(map(chr,range(ord('a'),ord('z')+1))):
             getYahooData.get_tickers_info(True, letter)
-            getYahooData.run_singles_gets(date_format, 0)
+            getYahooData.run_singles_gets(date_format, 0 , "")
             print(getYahooData.df_yahoo_data)
             getYahooData.save_yahoo_data()
         #get data from csv and save to db
@@ -244,6 +244,10 @@ def scanner():
         master_rsdata = _gcharts.build_master_rsdata(_consolidate_list)
         action_data = {"getdata": "consolidate"}
 
+    if scan_data == "21Cross50":
+        print("21Cross50")
+        pass
+
     return render_template('scanner.html',
         jaction_data = json.dumps(action_data),
         jstocks_data = json.dumps(master_data),
@@ -339,7 +343,7 @@ def industry():
     _gcharts = gcharts.IndustryCharts()
     _gcharts.getData(sort_by)
     master_data = ""
-    master_data = _gcharts.build_maser_data()
+    master_data = _gcharts.build_master_data()
     print(master_data)
     # send all to industry.html page
     return render_template('industry.html', 

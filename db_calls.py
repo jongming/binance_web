@@ -156,7 +156,7 @@ def select_Finviz_Performance(sort_by):
             cursor.execute("SELECT industry from Finviz_r_perform WHERE on_date = (SELECT MAX(on_date) FROM Finviz_r_perform) ORDER by perfM DESC;")
         else:
             # cursor.execute("SELECT on_date, industry, perfT FROM Finviz_r_perform order by on_date, perfT;")
-            cursor.execute("SELECT industry from Finviz_r_perform WHERE on_date = (SELECT MAX(on_date) FROM Finviz_r_perform) ORDER by perfT DESC limit 5;")
+            cursor.execute("SELECT industry from Finviz_r_perform WHERE on_date = (SELECT MAX(on_date) FROM Finviz_r_perform) ORDER by perfT DESC;")
         records = cursor.fetchall()
 
         cursor.close()
@@ -437,6 +437,39 @@ def select_historical_data_tickers():
     finally:
         if (sqliteConnection):
             sqliteConnection.close()
+
+def select_historical_data_21_cross_50():
+    try:
+        sqliteConnection = sqlite3.connect(database, timeout=10)
+        sql = """
+        SELECT ticker, on_date, close, ema21, sma50, ROUND(ema21-sma50,2) as 'ema21-sma50', LastEma21, LastSma50, ROUND(LastEma21-LastSma50,2) AS 'LastEma21-LastSma50' FROM
+        (
+        SELECT ticker, on_date, ROUND(close,2) as close, ROUND(ema21,2) as ema21,
+        ROUND(LAG(ema21, 1, 0) OVER (PARTITION BY ticker ORDER BY on_date),2) as LastEma21, 
+        ROUND(sma50,2) as sma50,
+        ROUND(LAG(sma50, 1, 0) OVER (PARTITION BY ticker ORDER BY on_date),2) as LastSma50
+
+        FROM historical_data 
+        WHERE 
+        on_date BETWEEN (SELECT DATE(max(on_date), '-5 day') FROM historical_data limit 1) AND (SELECT max(on_date) FROM historical_data limit 1)
+        ORDER BY on_date DESC 
+        )
+        WHERE 
+        ema21-sma50 > 0 
+        AND LastEma21-LastSma50 < 0
+        ORDER BY on_date DESC
+        """
+        query = sqliteConnection.execute(sql)
+        cols = [column[0] for column in query.description]
+        results= pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
+        return results
+    except sqlite3.Error as error:
+        _error = error_handler.Error_Handler(error, sys.exc_info())
+        _error.save_to_errorlog(f">>> Failed to select_historical_data_tickers")
+    finally:
+        if (sqliteConnection):
+            sqliteConnection.close()
+
 
 def select_all_tickers():
     try:

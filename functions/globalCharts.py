@@ -1,4 +1,4 @@
-import imp
+# import imp
 import db_calls
 import pandas as pd
 
@@ -319,7 +319,7 @@ class IndustryCharts:
         print(self.df_finviz_daily_performance)
         self.df_ticker_industry = db_calls.select_ticker_and_industry()
 
-    def build_maser_data(self):
+    def build_master_data(self):
         _ind_list = build_stock_list("ind", self.df_finviz_daily_performance.index)
         _master_data = {}
         _count = 0
