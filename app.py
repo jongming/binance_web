@@ -19,6 +19,7 @@ from functions import globalCharts as gcharts
 from functions import getIBD as gIBD
 from functions import getFinviz as gFinviz
 from functions import moving_averages as ma
+from functions import consolidate
 
 app = Flask(__name__)
 CORS(app)
@@ -186,9 +187,9 @@ def scanner():
     action_data = []
     scan_data = ""
 
-    dict = request.form
-    for key in dict:
-        print(key + " " + dict[key])
+    # dict = request.form
+    # for key in dict:
+    #     print(key + " " + dict[key])
 
     print("*******************")
     if request.method == "POST":
@@ -202,18 +203,12 @@ def scanner():
         form_vol_percent = request.form['vol_percent']
         form_vol = request.form['vol']
         _gcharts = gcharts.GlobalCharts()
-        print(form_cmp, form_rs, form_price_change, form_vol_percent, form_vol)
+        # print(form_cmp, form_rs, form_price_change, form_vol_percent, form_vol)
         lst_tickers = _gcharts.getVolumeChange(form_cmp, form_rs, form_price_change, form_vol_percent, form_vol)
-        # print(list(lst_tickers))
         _df = _gcharts.getHistoricalData(list(lst_tickers))
-        # print(_df)
         _consolidate_list = list(_df['tk'].unique())
-        # print("]]]]]]]]]]]]]]]]]]]]")
-        # print(_consolidate_list)
         _gcharts.build_list(_consolidate_list)
         master_data = _gcharts.build_master_data(_consolidate_list)
-        # print("------------master_date-----------")
-        # print(master_data)
         master_rsdata = _gcharts.build_master_rsdata(_consolidate_list)
         action_data = {"getdata": "consolidate"}
 
@@ -226,27 +221,49 @@ def scanner():
         _consolidate_list =[]
 
         _gcharts = gcharts.GlobalCharts()
-        _lists = _gcharts.get_isConsolidate_isBreak(cmp=form_cmp, rs=form_rs, lookback=form_lookback, pcent=form_percent)
-        # print("_list")
-        # print(_lists)
+        _consolidate = consolidate.Consolidate()
+        _lists = _consolidate.get_isConsolidate_isBreak(cmp=form_cmp, rs=form_rs, lookback=form_lookback, pcent=form_percent)
+        print("________consolidate-get isConsolidate_________")
+        print(_lists)
+
         _consolidate_list = _lists[0]
         _breakout_list = _lists[1]
         _df = _gcharts.getHistoricalData(_consolidate_list)
-        # _columns = ['date', 'high', 'low', 'open', 'adj_close', 'pre_close', 'volume', 'tk']
-        # _df = _gcharts.getHistoricalData_fromcsv(_file, _columns)
+        
         _consolidate_list = list(_df['tk'].unique())
-        print("]]]]]]]]]]]]]]]]]]]]")
+        print("________consolidate-_consolidate_list_________")
         print(_consolidate_list)
         _gcharts.build_list(_consolidate_list)
         master_data = _gcharts.build_master_data(_consolidate_list)
-        print("------------master_date-----------")
-        print(master_data)
         master_rsdata = _gcharts.build_master_rsdata(_consolidate_list)
         action_data = {"getdata": "consolidate"}
 
-    if scan_data == "21Cross50":
+
+        # _gcharts = gcharts.GlobalCharts()
+        # _lists = _gcharts.get_isConsolidate_isBreak(cmp=form_cmp, rs=form_rs, lookback=form_lookback, pcent=form_percent)
+        # _consolidate_list = _lists[0]
+        # _breakout_list = _lists[1]
+        # _df = _gcharts.getHistoricalData(_consolidate_list)
+        # _consolidate_list = list(_df['tk'].unique())
+        # _gcharts.build_list(_consolidate_list)
+        # master_data = _gcharts.build_master_data(_consolidate_list)
+        # master_rsdata = _gcharts.build_master_rsdata(_consolidate_list)
+        # action_data = {"getdata": "consolidate"}
+
+        # _gcharts = gcharts.GlobalCharts()
+        # _lists = _gcharts.get_isConsolidate_isBreak(cmp=form_cmp, rs=form_rs, lookback=form_lookback, pcent=form_percent)
+        # _consolidate_list = _lists[0]
+        # _breakout_list = _lists[1]
+        # _df = _gcharts.getHistoricalData(_consolidate_list)
+        # _consolidate_list = list(_df['tk'].unique())
+        # _gcharts.build_list(_consolidate_list)
+        # master_data = _gcharts.build_master_data(_consolidate_list)
+        # master_rsdata = _gcharts.build_master_rsdata(_consolidate_list)
+        # action_data = {"getdata": "consolidate"}
+
+    if scan_data == "Get 21Cross50":
         print("21Cross50")
-        pass
+        print(request.form['lookback'])
 
     return render_template('scanner.html',
         jaction_data = json.dumps(action_data),

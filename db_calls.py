@@ -281,12 +281,13 @@ def select_IBD_data(ticker):
     try:
         sqliteConnection = sqlite3.connect(database)
         cursor = sqliteConnection.cursor()
-        cursor.execute("select d.on_date as date, d.cmp, d.eps, d.rs, replace(d.smr,'..',0) as SMR, g1.value as SMR_value, d.accdis as accdis, g2.value as accdis_value, s.industry as iindustry, f.sector, f.industry as findustry from IBD_Data d INNER JOIN stock s ON d.ticker = s.ticker INNER JOIN Finviz f ON f.ticker = d.ticker LEFT JOIN grading_values g1 ON g1.letter = d.SMR LEFT JOIN grading_values g2 ON g2.letter = d.accdis where d.ticker = ?  ORDER BY d.on_date;", (ticker,))
+        cursor.execute("select d.on_date as date, d.cmp, d.eps, d.rs, replace(d.smr,'..',0) as SMR, g1.value as SMR_value, d.accdis as accdis, IFNULL(g2.value,0) as accdis_value, s.industry as iindustry, f.sector, f.industry as findustry from IBD_Data d INNER JOIN stock s ON d.ticker = s.ticker INNER JOIN Finviz f ON f.ticker = d.ticker LEFT JOIN grading_values g1 ON g1.letter = d.SMR LEFT JOIN grading_values g2 ON g2.letter = d.accdis where d.ticker = ?  ORDER BY d.on_date;", (ticker,))
         records = cursor.fetchall()
         cursor.close()
 
         column_names = [ "date", "CMP", "EPS", "RS", "SMR", "SMR_value", "AD", "accdis_value", "iindustry", "sector", "findustry"]
         df = pd.DataFrame(records, columns = column_names)
+        print(df)
         return df
         
     except sqlite3.Error as error:
@@ -462,6 +463,7 @@ def select_historical_data_21_cross_50():
         query = sqliteConnection.execute(sql)
         cols = [column[0] for column in query.description]
         results= pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
+        print(results)
         return results
     except sqlite3.Error as error:
         _error = error_handler.Error_Handler(error, sys.exc_info())

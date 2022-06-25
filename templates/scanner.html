@@ -24,7 +24,7 @@
                         <label>Percent consolidation:</label>
                         <input class="reg" type="number" placeholder="5" value="5" id="percent" name="percent">
                     </span>
-                    <input type="submit" name="scan_data" value="consolidate">
+                    <input type="submit" name="scan_data" value="consolidate" onclick="setMotion()">
                     
                 </div>
             </form>
@@ -46,7 +46,7 @@
                     <input class="reg" type="number" placeholder="50" value="50" id="vol_percent" name="vol_percent">
                     <label>Volume:</label>
                     <input class="long" type="number" placeholder="400000" value="400000" id="vol" name="vol">
-                    <input type="submit" name="scan_data" value="Get Volume Profile">
+                    <input type="submit" name="scan_data" value="Get Volume Profile" onclick="setMotion()">
                 </div>
             </form>
 
@@ -57,10 +57,9 @@
         <td>
             <form method="post"> 
                 <div>
-                    <span>
-                        <label>21 EMA Crossing 50 SMA:</label>
-                    </span>
-                    <input type="submit" name="scan_data" value="21Cross50">
+                    <label>Lookback </label>
+                    <input class="reg" type="number" placeholder="5" value="5" id="lookback" name="lookback"> days
+                    <input type="submit" name="scan_data" value="Get 21Cross50" onclick="setMotion()">
                 </div>
             </form>
 
@@ -70,7 +69,9 @@
 <table id="display_table" class="table_records">
     <tr>
         <th></th>
-        <th>Info</th>
+        <th>Info
+            <div id="loader" class="loader"></div>
+        </th>
         <th></th>
     </tr>
 </table>
@@ -78,6 +79,13 @@
 <script src="{{url_for('static', filename='chartjs.js')}}"></script>
 <script src="{{url_for('static', filename='layout_charts_n_data.js')}}"></script>
 <script>
+    // document.getElementById("loader").style.display = "none";
+    function setMotion(){
+        console.log("Set Motion")
+        document.getElementById("loader").style.display = "block";
+        // document.getElementById("response_text").display = "none";
+        // document.getElementById("response_text").innerHTML = "";
+    }
     
     document.getElementById("page_heading").innerHTML = "Scanner";
     var action_data = JSON.parse({{jaction_data | tojson}});
@@ -86,7 +94,7 @@
     var stock_list = JSON.parse({{jstock_list | tojson | safe}});
 
     console.log(stocks_data)
-    // console.log(rs_data)
+    console.log(rs_data)
     // console.log(stock_list)
 
     if (action_data.getdata == "consolidate"){
