@@ -58,7 +58,7 @@
             <form method="post"> 
                 <div>
                     <label>Lookback </label>
-                    <input class="reg" type="number" placeholder="5" value="5" id="lookback" name="lookback"> days
+                    <input class="reg" type="number" placeholder="10" value="10" id="lookback" name="lookback"> days
                     <input type="submit" name="scan_data" value="Get 21Cross50" onclick="setMotion()">
                 </div>
             </form>
@@ -79,7 +79,7 @@
 <script src="{{url_for('static', filename='chartjs.js')}}"></script>
 <script src="{{url_for('static', filename='layout_charts_n_data.js')}}"></script>
 <script>
-    // document.getElementById("loader").style.display = "none";
+    document.getElementById("loader").style.display = "none";
     function setMotion(){
         console.log("Set Motion")
         document.getElementById("loader").style.display = "block";

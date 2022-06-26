@@ -254,7 +254,7 @@ def select_IBD_tickers_by_rs(cmp=80, rs=80):
             sqliteConnection.close()
 
 def select_IBD_tickers_byVariables(cmp, rs, price_change, vol_percent, volume):
-    print(cmp, rs, price_change, vol_percent, volume)
+    # print(cmp, rs, price_change, vol_percent, volume)
     try:
         sqliteConnection = sqlite3.connect(database, timeout=10)
         cursor = sqliteConnection.cursor()
@@ -439,11 +439,12 @@ def select_historical_data_tickers():
         if (sqliteConnection):
             sqliteConnection.close()
 
-def select_historical_data_21_cross_50():
+def select_historical_data_21_cross_50(lookback):
+    _lookback = '-' + lookback + ' day'
     try:
         sqliteConnection = sqlite3.connect(database, timeout=10)
         sql = """
-        SELECT ticker, on_date, close, ema21, sma50, ROUND(ema21-sma50,2) as 'ema21-sma50', LastEma21, LastSma50, ROUND(LastEma21-LastSma50,2) AS 'LastEma21-LastSma50' FROM
+        SELECT ticker FROM
         (
         SELECT ticker, on_date, ROUND(close,2) as close, ROUND(ema21,2) as ema21,
         ROUND(LAG(ema21, 1, 0) OVER (PARTITION BY ticker ORDER BY on_date),2) as LastEma21, 
@@ -452,7 +453,7 @@ def select_historical_data_21_cross_50():
 
         FROM historical_data 
         WHERE 
-        on_date BETWEEN (SELECT DATE(max(on_date), '-5 day') FROM historical_data limit 1) AND (SELECT max(on_date) FROM historical_data limit 1)
+        on_date BETWEEN (SELECT DATE(max(on_date), ?) FROM historical_data limit 1) AND (SELECT max(on_date) FROM historical_data limit 1)
         ORDER BY on_date DESC 
         )
         WHERE 
@@ -460,10 +461,11 @@ def select_historical_data_21_cross_50():
         AND LastEma21-LastSma50 < 0
         ORDER BY on_date DESC
         """
-        query = sqliteConnection.execute(sql)
-        cols = [column[0] for column in query.description]
-        results= pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
-        print(results)
+        query = sqliteConnection.execute(sql, (_lookback,))
+        print(sql)
+        # cols = [column[0] for column in query.description]
+        # results= pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
+        results = list(query.fetchall())
         return results
     except sqlite3.Error as error:
         _error = error_handler.Error_Handler(error, sys.exc_info())

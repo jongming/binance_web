@@ -55,10 +55,21 @@ function volume(_chart){
 	return _volumeSeries
 }
 
-function smaLine(_chart){
+function smaLine(_chart, count){
+	var _color = 'rgba(255,215,0, 0.8)';
+	var _lineWidth = 2;
+
+	if (count == 21){
+		_color = 'rgba(138,43,226, 0.8)';
+		_lineWidth = 3;
+	}else if (count == 50) {
+		_color = 'rgba(255,82,82, 0.8)';
+		_lineWidth = 3;
+	}
+
 	var _smaLine = _chart.addLineSeries({
-		color:'rgba(255,82,82, 0.8)',
-		lineWidth:2,
+		color: _color,
+		lineWidth: _lineWidth,
 	});
 	return _smaLine;
 } 
@@ -89,6 +100,7 @@ function calculateHline(data, count, value){
 }
 
 function calculateSMA(data, count){
+	console.log("calculateSMA:"+count)
 	var avg = function(data) {
 	  var sum = 0;
 	  for (var i = 0; i < data.length; i++) {
@@ -116,10 +128,18 @@ if (typeof stocks_data !== 'undefined'){
 		window['volumeSeries'+i] = new volume(window['chart'+i])
 		window['volumeSeries'+i].setData(eval('stocks_data.stock'+i+'.volume'));
 
-		window['smaData'+i] = calculateSMA(eval('stocks_data.stock'+i+'.candlesticks'), 8);
+		window['smaData8'+i] = calculateSMA(eval('stocks_data.stock'+i+'.candlesticks'), 8);
+		window['smaData21'+i] = calculateSMA(eval('stocks_data.stock'+i+'.candlesticks'), 21);
+		window['smaData50'+i] = calculateSMA(eval('stocks_data.stock'+i+'.candlesticks'), 50);
 		
-		window['smaline'+i] = new smaLine(window['chart'+i])
-		window['smaline'+i].setData(window['smaData'+i]);
+		window['smaline8'+i] = new smaLine(window['chart'+i], 8)
+		window['smaline8'+i].setData(window['smaData8'+i]);
+
+		window['smaline21'+i] = new smaLine(window['chart'+i], 21)
+		window['smaline21'+i].setData(window['smaData21'+i]);
+
+		window['smaline50'+i] = new smaLine(window['chart'+i], 50)
+		window['smaline50'+i].setData(window['smaData50'+i]);
 
 		// window['hLine'+i] = new hLine(window['chart'+i])
 		// window['hData'+i] = calculateHline(eval('stocks_data.stock'+i+'.candlesticks'), 8, 360);

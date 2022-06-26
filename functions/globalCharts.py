@@ -240,33 +240,6 @@ class GlobalCharts:
         df = db_calls.select_IBD_tickers_byVariables(cmp, rs, price_change, volume_percent, volume)
         return df
 
-    # def get_isConsolidate_isBreak(self, cmp=80, rs=80, lookback=10, pcent=3):
-    #     _breakout_list =[]
-    #     _stocklist = []
-    #     # df_all = db_calls.select_all_tickers()
-    #     df_all = db_calls.select_IBD_tickers_by_rs(cmp, rs)
-    #     # print(".................")
-    #     # print(df_all)
-    #     for ind in df_all.index:
-    #         ticker = df_all['ticker'][ind]
-    #         _result = {}
-    #         _df = db_calls.select_historical_data(ticker, days=30)
-    #         _is_consolidating = is_consolidating(_df, lookback = lookback, pcent=pcent)
-    #         _is_breaking_out = is_breaking_out(_df, lookback = lookback, pcent=pcent)
-    #         if _is_consolidating:
-    #             _result['ticker'] = ticker
-    #             _result['is_cons'] = _is_consolidating
-    #             _result['is_break'] = _is_breaking_out
-    #             _breakout_list.append(_result)
-    #             _stocklist.append(ticker)
-    #     # print(">>>>>>>>>>>>>")
-    #     # print(_breakout_list)
-    #     # print(_stocklist)
-    #     return [_stocklist, _breakout_list]
-
-
-
-
     def historicalData_to_cvs(self, file):
         save_df_csv(self.df_historicalData, file, False)
 
