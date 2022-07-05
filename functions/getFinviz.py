@@ -45,15 +45,26 @@ class GetFinviz:
         
         return ticker, name, sector, industry, country
 
+    def _inside_buying(self, html, tag):
+        try:   
+            data = []
+            for a in html.find_all('tr', {"class": tag}):
+                row = []
+                for b in a.find_all('td'):
+                    row.append(b.text)
+                data.append(row)
+        except Exception as e:
+            return e
+        
+        return data
+
     def tickers_notin_Finviz(self):
         return db_calls.select_IBD_tickers_notin_Finviz()
 
     def scrape_stock_info(self, df_tickers):
         df_all = pd.DataFrame()
         for ticker in df_tickers['ticker'].tolist():
-            # url = ("http://finviz.com/quote.ashx?t=" + ticker.lower())
             url = ("https://finviz.com/quote.ashx?t=" + ticker)
-            # print(url)
             html = self._finviz_scraper(url)
             if len(html) > 0:
                 company_info = self._company_info(html, ticker)
@@ -66,6 +77,32 @@ class GetFinviz:
         df_all['ticker2'] = df_all.loc[:, 'ticker']
         # print(df_all)
         return df_all
+
+    def scrape_inside_buying(self):
+        from operator import itemgetter
+        df = pd.DataFrame()
+        record = []
+
+        url = ("https://finviz.com/insidertrading.ashx?tc=1")
+        html = self._finviz_scraper(url)
+        if len(html) > 0:
+            _tag1 = "insider-buy-row-1 cursor-pointer align-top"
+            _tag2 = "insider-buy-row-2 cursor-pointer align-top"
+
+            _data1 = self._inside_buying(html, _tag1)
+            _data2 = self._inside_buying(html, _tag2)
+            _all_data = _data1 + _data2
+            
+            for row in sorted(_all_data, key=itemgetter(0)):
+                record.append([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[0], row[1], row[2], row[3], row[4], row[5], row[6]])
+
+            column_names = ['ticker', 'owner', 'relationship', 'on_date', 'action', 'cost', 'shares', 'ticker', 'owner', 'relationship', 'on_date', 'action', 'cost', 'shares']
+            df = pd.DataFrame(record, columns=column_names)
+            # print(df)
+
+        if record:
+            db_calls.batch_insert_Finviz_inside_buying(df)
+ 
     
     def save_Finviz(self, df):
         # print(df)

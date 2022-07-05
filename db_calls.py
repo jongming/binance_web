@@ -31,6 +31,22 @@ def batch_insert_Finviz(df):
             cursor.close()
             sqliteConnection.close() 
 
+def batch_insert_Finviz_inside_buying(df):
+    print(df)
+    sql = "INSERT INTO Finviz_inside_action (ticker, owner, relationship, on_date, action, cost, shares) SELECT ?,?,?,?,?,?,? WHERE NOT EXISTS (SELECT ticker FROM Finviz_inside_action WHERE ticker = ? AND owner = ? AND relationship = ? AND on_date = ? AND action = ? AND cost = ? AND shares = ?)"
+    try:
+        sqliteConnection = sqlite3.connect(database, timeout=10)
+        cursor = sqliteConnection.cursor()
+        cursor.executemany(sql, df.values.tolist())
+        sqliteConnection.commit()
+    except sqlite3.Error as error:
+        _error = error_handler.Error_Handler(error, sys.exc_info())
+        _error.save_to_errorlog(">>> Failed: batch_insert_Finviz_inside_buying")
+
+    finally:
+        if (sqliteConnection):
+            cursor.close()
+            sqliteConnection.close() 
 
 def batch_insert_Finviz_r_perform(df):
     # sql = "INSERT INTO Finviz_r_perform (on_date, industry, perfT, perfW, perfM) VALUES (?,?,?,?,?)"

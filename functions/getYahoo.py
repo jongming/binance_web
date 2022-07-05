@@ -1,3 +1,4 @@
+
 import pandas as pd
 from pandas_datareader import data as pdr
 # import sqlite3
@@ -174,6 +175,8 @@ def last_tradingday():
     elif nyc_datetime.weekday() ==6:
         #print('day=6')
         lastTradingDay = nyc_datetime + dt.timedelta(days=-2) 
+    else:
+        lastTradingDay = nyc_datetime
     #return lastTradingDay.strftime('%Y-%m-%d')
-    #print('last_tradingday: ' + str(lastTradingDay.date()))
+    print('last_tradingday: ' + str(lastTradingDay))
     return lastTradingDay.date() + dt.timedelta(days=1)

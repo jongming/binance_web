@@ -82,8 +82,8 @@ def getdata():
     if request.method == "POST":
         result = "Wait"
         get_external_data = request.form['get_external_data']
-        # print("get_external_data: " + get_external_data)
-        # print("---"* 10)
+        print("get_external_data: " + get_external_data)
+        print("---"* 10)
 
     if get_external_data == "finviz_daily":
         print("finviz_daily")
@@ -138,10 +138,12 @@ def getdata():
 
     if get_external_data == "Save Yahoo daily":
         print("Save yahoo daily")
+        from_letter = request.form["from_letter"]
+        print("from_letter: " + from_letter )
         getYahooData = gyahoo.GetYahoo()
 
         #save data from running yahoo get
-        for letter in list(map(chr,range(ord('a'),ord('z')+1))):
+        for letter in list(map(chr,range(ord(from_letter.lower()),ord('z')+1))):
             getYahooData.get_tickers_info(True, letter)
             getYahooData.run_singles_gets(date_format, 0 , "")
             print(getYahooData.df_yahoo_data)
@@ -163,6 +165,16 @@ def getdata():
         _getFinviz.save_Finviz(_df_scrape_stock_info)
         df_data = _df_scrape_stock_info.values.tolist()
         result = True
+
+    if get_external_data == "Finviz inside buying":
+        print("Finviz inside buying")
+        _getFinviz = gFinviz.GetFinviz()
+        _getFinviz.scrape_inside_buying()
+        # print(_df_scrape_stock_info)
+        # _getFinviz.save_Finviz(_df_scrape_stock_info)
+        # df_data = _df_scrape_stock_info.values.tolist()
+        result = True 
+
 
     if get_external_data == "Moving Average":
         print("Moving Average")

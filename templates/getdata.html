@@ -19,6 +19,7 @@ Get DAta!
                 <br/>
                 <div>
                     <label for="save_yahoo_daily">Save CSV to DB</label>
+                    from <input type="text" name="from_letter" value="A" maxlength="1" size="2"> to Z &nbsp;
                     <input type="submit" name="get_external_data" value="Save Yahoo daily" onclick="setMotion()">
                 </div>
                 <br/>
@@ -50,8 +51,16 @@ Get DAta!
     <tr>
         <td>
             <form method="post"> 
-                <label for="finviz_daily">Get Finviz Industry Daily Performance:</label>
+                <label for="finviz_daily">Finviz: Industry Daily Performance:</label>
                 <input type="submit" name="get_external_data" value="finviz_daily"  onclick="setMotion()">
+            </form>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <form method="post"> 
+                <label for="finviz_daily">Finviz: Inside buying:</label>
+                <input type="submit" name="get_external_data" value="Finviz inside buying"  onclick="setMotion()">
             </form>
         </td>
     </tr>
@@ -70,6 +79,7 @@ Get DAta!
                 <input type="text" name="ticker">
                 <input type="submit" name="get_external_data" value="Moving Average"  onclick="setMotion()">
             </form>
+            Enter stock(s) or none for all stocks.
         </td>
     </tr>
 </table>
