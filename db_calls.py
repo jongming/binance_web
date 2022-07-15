@@ -455,27 +455,28 @@ def select_historical_data_tickers():
         if (sqliteConnection):
             sqliteConnection.close()
 
-def select_historical_data_21_cross_50(lookback):
+def select_historical_data_8_cross_21(lookback):
     _lookback = '-' + lookback + ' day'
     try:
         sqliteConnection = sqlite3.connect(database, timeout=10)
         sql = """
-        SELECT ticker FROM
+        SELECT H.ticker FROM
         (
-        SELECT ticker, on_date, ROUND(close,2) as close, ROUND(ema21,2) as ema21,
-        ROUND(LAG(ema21, 1, 0) OVER (PARTITION BY ticker ORDER BY on_date),2) as LastEma21, 
-        ROUND(sma50,2) as sma50,
-        ROUND(LAG(sma50, 1, 0) OVER (PARTITION BY ticker ORDER BY on_date),2) as LastSma50
+        SELECT ticker,  on_date, ROUND(close,2) as close, ROUND(ema8,2) as ema8, ROUND(ema21,2) as ema21, 
+        ROUND(LAG(ema8, 1, 0) OVER (PARTITION BY ticker ORDER BY on_date),2) as LastEma8, 
+        ROUND(LAG(ema21, 1, 0) OVER (PARTITION BY ticker ORDER BY on_date),2) as LastEma21
 
         FROM historical_data 
         WHERE 
         on_date BETWEEN (SELECT DATE(max(on_date), ?) FROM historical_data limit 1) AND (SELECT max(on_date) FROM historical_data limit 1)
+        AND vol50 > 400000
         ORDER BY on_date DESC 
-        )
+        ) H INNER JOIN IBD_Data I  ON I.ticker=H.ticker AND H.on_date = I.on_date
         WHERE 
-        ema21-sma50 > 0 
-        AND LastEma21-LastSma50 < 0
-        ORDER BY on_date DESC
+        ema8-ema21 > 0 
+        AND LastEma8-LastEma21 < 0
+        AND rs > 80
+        ORDER BY H.on_date DESC
         """
         query = sqliteConnection.execute(sql, (_lookback,))
         print(sql)
@@ -490,6 +491,42 @@ def select_historical_data_21_cross_50(lookback):
         if (sqliteConnection):
             sqliteConnection.close()
 
+
+def select_historical_data_21_cross_50(lookback):
+    _lookback = '-' + lookback + ' day'
+    try:
+        sqliteConnection = sqlite3.connect(database, timeout=10)
+        sql = """
+        SELECT H.ticker FROM
+        (
+        SELECT ticker, on_date, ROUND(close,2) as close, ROUND(ema21,2) as ema21,
+        ROUND(LAG(ema21, 1, 0) OVER (PARTITION BY ticker ORDER BY on_date),2) as LastEma21, 
+        ROUND(sma50,2) as sma50,
+        ROUND(LAG(sma50, 1, 0) OVER (PARTITION BY ticker ORDER BY on_date),2) as LastSma50
+
+        FROM historical_data 
+        WHERE 
+        on_date BETWEEN (SELECT DATE(max(on_date), ?) FROM historical_data limit 1) AND (SELECT max(on_date) FROM historical_data limit 1)
+        AND vol50 > 400000
+        ORDER BY on_date DESC 
+        ) H INNER JOIN IBD_Data I  ON I.ticker=H.ticker AND H.on_date = I.on_date
+        WHERE 
+        ema21-sma50 > 0 
+        AND LastEma21-LastSma50 < 0
+        AND rs > 80
+        ORDER BY H.on_date DESC
+        """
+        query = sqliteConnection.execute(sql, (_lookback,))
+        # cols = [column[0] for column in query.description]
+        # results= pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
+        results = list(query.fetchall())
+        return results
+    except sqlite3.Error as error:
+        _error = error_handler.Error_Handler(error, sys.exc_info())
+        _error.save_to_errorlog(f">>> Failed to select_historical_data_tickers")
+    finally:
+        if (sqliteConnection):
+            sqliteConnection.close()
 
 def select_all_tickers():
     try:
@@ -549,7 +586,6 @@ def select_ticker_by_industry(industry):
     finally:
         if sqliteConnection:
             sqliteConnection.close()       
-
 
 def update_historical_data_moving_avg(df):
     sql = "UPDATE historical_data SET vol50=?, vol_pct=?, ema8=?, ema21=?, sma50=?, sma200=? WHERE id=?"

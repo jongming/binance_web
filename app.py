@@ -246,31 +246,24 @@ def scanner():
         master_rsdata = _gcharts.build_master_rsdata(_consolidate_list)
         action_data = {"getdata": "consolidate"}
 
-        #Original
-        # _gcharts = gcharts.GlobalCharts()
-        # _lists = _gcharts.get_isConsolidate_isBreak(cmp=form_cmp, rs=form_rs, lookback=form_lookback, pcent=form_percent)
-        # _consolidate_list = _lists[0]
-        # _breakout_list = _lists[1]
-        # _df = _gcharts.getHistoricalData(_consolidate_list)
-        # _consolidate_list = list(_df['tk'].unique())
-        # _gcharts.build_list(_consolidate_list)
-        # master_data = _gcharts.build_master_data(_consolidate_list)
-        # master_rsdata = _gcharts.build_master_rsdata(_consolidate_list)
-        # action_data = {"getdata": "consolidate"}
-
-    if scan_data == "Get 21Cross50":
-        print("21Cross50")
+    if scan_data == "Get 21Cross50" or scan_data == "Get 8Cross21":
+        print(scan_data)
         print(request.form['lookback'])
         _crossingMA = crossingMA.CrossingMA()
         _gcharts = gcharts.GlobalCharts()
-        ticker_list = _crossingMA.get21Crossing50(request.form['lookback'])
+        ticker_list = []
+        if scan_data == "Get 21Cross50":
+            ticker_list = _crossingMA.get21Crossing50(request.form['lookback'])
+        else:
+            ticker_list = _crossingMA.get8Crossing21(request.form['lookback'])
 
-        _df = _gcharts.getHistoricalData(ticker_list)
-        _consolidate_list = list(_df['tk'].unique())
-        _gcharts.build_list(_consolidate_list)
-        master_data = _gcharts.build_master_data(_consolidate_list)
-        master_rsdata = _gcharts.build_master_rsdata(_consolidate_list)
-        action_data = {"getdata": "consolidate"}
+        if ticker_list:
+            _df = _gcharts.getHistoricalData(ticker_list)
+            _consolidate_list = list(_df['tk'].unique())
+            _gcharts.build_list(_consolidate_list)
+            master_data = _gcharts.build_master_data(_consolidate_list)
+            master_rsdata = _gcharts.build_master_rsdata(_consolidate_list)
+            action_data = {"getdata": "consolidate"}
 
     return render_template('scanner.html',
         jaction_data = json.dumps(action_data),
